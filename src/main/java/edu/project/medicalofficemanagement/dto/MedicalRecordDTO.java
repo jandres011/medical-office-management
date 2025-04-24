@@ -28,6 +28,5 @@ public class MedicalRecordDTO {
     @NotBlank
     private String notes;
 
-    @Future
     private LocalDateTime createdAt;
 }

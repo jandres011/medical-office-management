@@ -1,6 +1,7 @@
 package edu.project.medicalofficemanagement.dto;
 
 import edu.project.medicalofficemanagement.enums.specialization.Specialization;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class DoctorDTO {
 
     @NotBlank
     private String name;
-
+    @Email
     @NotBlank
     private String email;
 
