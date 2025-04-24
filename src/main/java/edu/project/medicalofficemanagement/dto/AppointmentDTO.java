@@ -1,7 +1,8 @@
-package edu.project.medicalofficemanagement.DTO;
+package edu.project.medicalofficemanagement.dto;
 
 import edu.project.medicalofficemanagement.model.ConsultRoom;
 import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -12,14 +13,14 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AppointmentDto {
+public class AppointmentDTO {
 
     private Long id;
 
-    @NotNull
+    @NotBlank
     private String patientName;
 
-    @NotNull
+    @NotBlank
     private String doctorName;
 
     @NotNull
