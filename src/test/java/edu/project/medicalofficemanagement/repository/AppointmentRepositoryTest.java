@@ -37,7 +37,7 @@ class AppointmentRepositoryTest {
                 .build());
 
         Patient patient = patientRepository.save(Patient.builder()
-                .fullName("John Doe")
+                .fullName("Iris Martinez")
                 .email("john@example.com")
                 .build());
 
