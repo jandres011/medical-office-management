@@ -1,22 +1,53 @@
 package edu.project.medicalofficemanagement.repository;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import edu.project.medicalofficemanagement.model.Patient;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DataJpaTest
+@Testcontainers
 class PatientRepositoryTest {
 
-    @BeforeEach
-    void setUp() {
-    }
+    @Autowired
+    private PatientRepository patientRepository;
 
-    @AfterEach
-    void tearDown() {
+    @Test
+    void shouldFindPatientByEmail() {
+        patientRepository.save(Patient.builder()
+                .fullName("Maria Garcia")
+                .email("maria@example.com")
+                .phoneNumber("5551234567")
+                .build());
+
+        Optional<Patient> found = patientRepository.findByEmail("maria@example.com");
+
+        assertTrue(found.isPresent());
+        assertEquals("Maria Garcia", found.get().getFullName());
     }
 
     @Test
-    void findPatientByEmail() {
+    void shouldFindPatientByPhoneNumber() {
+        patientRepository.save(Patient.builder()
+                .fullName("Carlos Lopez")
+                .email("carlos@example.com")
+                .phoneNumber("5559876543")
+                .build());
+
+        Optional<Patient> found = patientRepository.findByPhoneNumber("5559876543");
+
+        assertTrue(found.isPresent());
+        assertEquals("Carlos Lopez", found.get().getFullName());
+    }
+
+    @Test
+    void shouldReturnEmptyWhenPatientNotFound() {
+        Optional<Patient> found = patientRepository.findByEmail("notfound@example.com");
+        assertFalse(found.isPresent());
     }
 }

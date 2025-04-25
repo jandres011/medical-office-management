@@ -1,25 +1,82 @@
 package edu.project.medicalofficemanagement.repository;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import edu.project.medicalofficemanagement.model.*;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+@DataJpaTest
+@Testcontainers
 class MedicalRecordRepositoryTest {
 
-    @BeforeEach
-    void setUp() {
-    }
+    @Autowired
+    private MedicalRecordRepository medicalRecordRepository;
 
-    @AfterEach
-    void tearDown() {
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
+
+    @Test
+    void shouldFindMedicalRecordsByPatientId() {
+        Patient patient = patientRepository.save(Patient.builder()
+                .fullName("John Doe")
+                .email("john@example.com")
+                .phoneNumber("1234567890")
+                .build());
+
+        Appointment appointment = appointmentRepository.save(Appointment.builder()
+                .patient(patient)
+                .build());
+
+        medicalRecordRepository.save(MedicalRecord.builder()
+                .patient(patient)
+                .appointment(appointment)
+                .diagnosis("Common cold")
+                .notes("Prescribed rest")
+                .build());
+
+        List<MedicalRecord> records = medicalRecordRepository.findByPatient_Id((patient.getId()));
+
+        assertFalse(records.isEmpty());
+        assertEquals("Common cold", records.get(0).getDiagnosis());
     }
 
     @Test
-    void findMedicalRecordsByPatient_Id() {
-    }
+    void shouldFindMedicalRecordsByDateRange() {
+        Patient patient = patientRepository.save(Patient.builder()
+                .fullName("Jane Smith")
+                .email("jane@example.com")
+                .phoneNumber("0987654321")
+                .build());
 
-    @Test
-    void findMedicalRecordsByCreatedAtBetween() {
+        Appointment appointment = appointmentRepository.save(Appointment.builder()
+                .patient(patient)
+                .build());
+
+        MedicalRecord record = medicalRecordRepository.save(MedicalRecord.builder()
+                .patient(patient)
+                .appointment(appointment)
+                .diagnosis("Fever")
+                .notes("Prescribed medication")
+                .build());
+
+        record.setCreatedAt(LocalDateTime.now().minusDays(1));
+        medicalRecordRepository.save(record);
+
+        LocalDateTime start = LocalDateTime.now().minusDays(2);
+        LocalDateTime end = LocalDateTime.now();
+
+        List<MedicalRecord> records = medicalRecordRepository.findByCreatedAtBetween(start, end);
+
+        assertFalse(records.isEmpty());
+        assertEquals("Fever", records.get(0).getDiagnosis());
     }
 }

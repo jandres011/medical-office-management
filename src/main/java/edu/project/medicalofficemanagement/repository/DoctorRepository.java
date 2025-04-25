@@ -12,4 +12,10 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     Optional<Doctor> findDoctorByEmail(String email);
     Optional<List<Doctor>> findDoctorsBySpecialization(Specialization specialization);
     Optional<List<Doctor>> findDoctorsByAvailibleFrom(LocalDateTime availibleFrom);
+
+    Optional<Doctor> findByEmail(String email);
+
+    List<Doctor> findBySpecialization(Specialization specialization);
+
+    List<Doctor> findByAvailibleFromLessThanEqualAndAvailibleToGreaterThanEqual(LocalDateTime availibleFromIsLessThan, LocalDateTime availibleToIsGreaterThan);
 }
