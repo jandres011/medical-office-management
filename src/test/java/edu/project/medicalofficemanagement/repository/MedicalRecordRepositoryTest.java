@@ -27,7 +27,7 @@ class MedicalRecordRepositoryTest {
     @Test
     void shouldFindMedicalRecordsByPatientId() {
         Patient patient = patientRepository.save(Patient.builder()
-                .fullName("John Doe")
+                .fullName("Juancho Lopez")
                 .email("john@example.com")
                 .phoneNumber("1234567890")
                 .build());
@@ -52,7 +52,7 @@ class MedicalRecordRepositoryTest {
     @Test
     void shouldFindMedicalRecordsByDateRange() {
         Patient patient = patientRepository.save(Patient.builder()
-                .fullName("Jane Smith")
+                .fullName("Pinco Lopez")
                 .email("jane@example.com")
                 .phoneNumber("0987654321")
                 .build());
