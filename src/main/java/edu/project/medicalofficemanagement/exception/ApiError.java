@@ -1,4 +1,4 @@
-package edu.project.medicalofficemanagement.exeption;
+package edu.project.medicalofficemanagement.exception;
 
 
 import lombok.AllArgsConstructor;

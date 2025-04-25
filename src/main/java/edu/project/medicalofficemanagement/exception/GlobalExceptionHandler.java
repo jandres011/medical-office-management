@@ -1,4 +1,4 @@
-package edu.project.medicalofficemanagement.exeption;
+package edu.project.medicalofficemanagement.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalExeptionHandler {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidationException(MethodArgumentNotValidException ex) {
@@ -55,8 +55,8 @@ public class GlobalExeptionHandler {
         return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(AppointmentNotFoundExeption.class)
-    public ResponseEntity<ApiError> handleAppointmentNotFound(AppointmentNotFoundExeption ex) {
+    @ExceptionHandler(AppointmentNotFoundException.class)
+    public ResponseEntity<ApiError> handleAppointmentNotFound(AppointmentNotFoundException ex) {
         ApiError error = ApiError.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.NOT_FOUND.value())
@@ -67,8 +67,8 @@ public class GlobalExeptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ConsultRoomNotFoundExeption.class)
-    public ResponseEntity<ApiError> handleConsultRoomNotFound(ConsultRoomNotFoundExeption ex) {
+    @ExceptionHandler(ConsultRoomNotFoundException.class)
+    public ResponseEntity<ApiError> handleConsultRoomNotFound(ConsultRoomNotFoundException ex) {
         ApiError error = ApiError.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.CONFLICT.value())
@@ -79,8 +79,8 @@ public class GlobalExeptionHandler {
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(DoctorNotFoundExeption.class)
-    public ResponseEntity<ApiError> handleDoctorNotFound(DoctorNotFoundExeption ex) {
+    @ExceptionHandler(DoctorNotFoundException.class)
+    public ResponseEntity<ApiError> handleDoctorNotFound(DoctorNotFoundException ex) {
         ApiError error = ApiError.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.NOT_FOUND.value())
@@ -91,8 +91,8 @@ public class GlobalExeptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(MedicalRecordNotFoundExeption.class)
-    public ResponseEntity<ApiError> handleMedicalRecordNotFound(MedicalRecordNotFoundExeption ex) {
+    @ExceptionHandler(MedicalRecordNotFoundException.class)
+    public ResponseEntity<ApiError> handleMedicalRecordNotFound(MedicalRecordNotFoundException ex) {
         ApiError error = ApiError.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.NOT_FOUND.value())
@@ -103,8 +103,8 @@ public class GlobalExeptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(PatientNotFoundExeption.class)
-    public ResponseEntity<ApiError> handlePatientNotFound(PatientNotFoundExeption ex) {
+    @ExceptionHandler(PatientNotFoundException.class)
+    public ResponseEntity<ApiError> handlePatientNotFound(PatientNotFoundException ex) {
         ApiError error = ApiError.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.NOT_FOUND.value())
@@ -115,8 +115,8 @@ public class GlobalExeptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(AppointmentAlreadyExistExeption.class)
-    public ResponseEntity<ApiError> handleAppointmentAlreadyExist(AppointmentAlreadyExistExeption ex) {
+    @ExceptionHandler(AppointmentAlreadyExistException.class)
+    public ResponseEntity<ApiError> handleAppointmentAlreadyExist(AppointmentAlreadyExistException ex) {
         ApiError error = ApiError.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.NOT_FOUND.value())
@@ -126,5 +126,4 @@ public class GlobalExeptionHandler {
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
-
 }
