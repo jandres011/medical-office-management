@@ -8,10 +8,13 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
 
 import java.util.List;
 
@@ -25,6 +28,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ConsultRoomController.class)
 @Import(ConsultRoomControllerTest.MockConfig.class)
 class ConsultRoomControllerTest {
+    @Container
+    @ServiceConnection
+    static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:15")
+            .withDatabaseName("testPostgres")
+            .withUsername("testUsername")
+            .withPassword("testPassword");
 
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
@@ -37,6 +46,7 @@ class ConsultRoomControllerTest {
             return Mockito.mock(ConsultRoomService.class);
         }
     }
+
 
     @Test
     void createConsultRoom_ShouldReturnCreated() throws Exception {

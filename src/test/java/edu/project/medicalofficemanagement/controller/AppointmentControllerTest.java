@@ -1,160 +1,126 @@
-package edu.project.medicalofficemanagement.service;
+package edu.project.medicalofficemanagement.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.project.medicalofficemanagement.dto.AppointmentDTO;
-import edu.project.medicalofficemanagement.exception.*;
-import edu.project.medicalofficemanagement.model.*;
-import edu.project.medicalofficemanagement.repository.*;
-import edu.project.medicalofficemanagement.service.impl.AppointmentServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
+import edu.project.medicalofficemanagement.enums.status.Status;
+import edu.project.medicalofficemanagement.service.AppointmentService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
-class AppointmentServiceTest {
+@WebMvcTest(AppointmentController.class)
+@Import(AppointmentControllerTest.MockConfig.class)
+class AppointmentControllerTest {
 
-    @Mock
-    private AppointmentRepository appointmentRepository;
+    @Autowired private MockMvc mockMvc;
+    @Autowired private ObjectMapper objectMapper;
+    @Autowired private AppointmentService appointmentService;
 
-    @Mock
-    private PatientRepository patientRepository;
-
-    @Mock
-    private DoctorRepository doctorRepository;
-
-    @Mock
-    private ConsultRoomRepository consultRoomRepository;
-
-    @Mock
-    private AppointmentMapper appointmentMapper;
-
-    @InjectMocks
-    private AppointmentServiceImpl appointmentService;
-
-    private AppointmentDTO appointmentDTO;
-    private Appointment appointment;
-    private Patient patient;
-    private Doctor doctor;
-    private ConsultRoom consultRoom;
-
-    @BeforeEach
-    void setUp() {
-        appointmentDTO = new AppointmentDTO();
-        appointmentDTO.setPatientId(1L);
-        appointmentDTO.setDoctorId(1L);
-        appointmentDTO.setConsultRoomId(1L);
-        appointmentDTO.setStartTime(LocalDateTime.now().plusDays(1));
-        appointmentDTO.setEndTime(LocalDateTime.now().plusDays(1).plusHours(1));
-
-        patient = new Patient();
-        patient.setId(1L);
-
-        doctor = new Doctor();
-        doctor.setId(1L);
-        doctor.setSpecialization(Specialization.CARDIOLOGY);
-
-        consultRoom = new ConsultRoom();
-        consultRoom.setId(1L);
-
-        appointment = new Appointment();
-        appointment.setId(1L);
-        appointment.setPatient(patient);
-        appointment.setDoctor(doctor);
-        appointment.setConsultRoom(consultRoom);
+    @TestConfiguration
+    static class MockConfig {
+        @Bean
+        public AppointmentService appointmentService() {
+            return Mockito.mock(AppointmentService.class);
+        }
     }
 
     @Test
-    void createAppointment_ShouldSuccess() {
-        when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
-        when(doctorRepository.findById(1L)).thenReturn(Optional.of(doctor));
-        when(consultRoomRepository.findById(1L)).thenReturn(Optional.of(consultRoom));
-        when(appointmentRepository.findConflicts(any(), any(), any(), any())).thenReturn(List.of());
-        when(appointmentMapper.toEntity(any())).thenReturn(appointment);
-        when(appointmentRepository.save(any())).thenReturn(appointment);
-        when(appointmentMapper.toDTO(any())).thenReturn(appointmentDTO);
+    void addAppointment_ShouldReturnCreated() throws Exception {
+        AppointmentDTO dto = AppointmentDTO.builder()
+                .id(1L)
+                .patientId(1L)
+                .doctorId(1L)
+                .consultRoomId(1L)
+                .startTime(LocalDateTime.now().plusDays(1))
+                .endTime(LocalDateTime.now().plusDays(1).plusHours(1))
+                .status(Status.SCHEDULED)
+                .build();
 
-        AppointmentDTO result = appointmentService.createAppointment(appointmentDTO);
+        when(appointmentService.createAppointment(any())).thenReturn(dto);
 
-        assertNotNull(result);
-        verify(appointmentRepository, times(1)).save(any());
+        mockMvc.perform(post("/api/v1/appointments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.status").value("SCHEDULED"));
     }
 
     @Test
-    void createAppointment_ShouldThrowWhenPatientNotFound() {
-        when(patientRepository.findById(1L)).thenReturn(Optional.empty());
+    void getAllAppointments_ShouldReturnList() throws Exception {
+        List<AppointmentDTO> list = new ArrayList<>();
+        list.add(AppointmentDTO.builder().id(1L).patientId(1L).build());
+        list.add(AppointmentDTO.builder().id(2L).patientId(2L).build());
 
-        assertThrows(PatientNotFoundException.class, () -> {
-            appointmentService.createAppointment(appointmentDTO);
-        });
+        when(appointmentService.getAllAppointments()).thenReturn(list);
+
+        mockMvc.perform(get("/api/v1/appointments"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].patientId").value(1L));
     }
 
     @Test
-    void createAppointment_ShouldThrowWhenConflictExists() {
-        when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
-        when(doctorRepository.findById(1L)).thenReturn(Optional.of(doctor));
-        when(consultRoomRepository.findById(1L)).thenReturn(Optional.of(consultRoom));
-        when(appointmentRepository.findConflicts(any(), any(), any(), any())).thenReturn(List.of(appointment));
+    void getAppointmentById_ShouldReturnAppointment() throws Exception {
+        AppointmentDTO dto = AppointmentDTO.builder()
+                .id(1L)
+                .patientId(1L)
+                .doctorId(1L)
+                .consultRoomId(1L)
+                .build();
 
-        assertThrows(AppointmentAlreadyExistException.class, () -> {
-            appointmentService.createAppointment(appointmentDTO);
-        });
+        when(appointmentService.getAppointmentById(1L)).thenReturn(dto);
+
+        mockMvc.perform(get("/api/v1/appointments/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.consultRoomId").value(1L));
     }
 
     @Test
-    void getAppointmentById_ShouldReturnAppointment() {
-        when(appointmentRepository.findById(1L)).thenReturn(Optional.of(appointment));
-        when(appointmentMapper.toDTO(any())).thenReturn(appointmentDTO);
+    void updateAppointment_ShouldReturnUpdated() throws Exception {
+        AppointmentDTO dto = AppointmentDTO.builder()
+                .id(1L)
+                .patientId(1L)
+                .doctorId(2L)
+                .consultRoomId(2L)
+                .startTime(LocalDateTime.now().plusDays(2))
+                .endTime(LocalDateTime.now().plusDays(2).plusHours(1))
+                .status(Status.SCHEDULED)
+                .build();
 
-        AppointmentDTO result = appointmentService.getAppointmentById(1L);
+        when(appointmentService.updateAppointment(eq(1L), any())).thenReturn(dto);
 
-        assertNotNull(result);
-        verify(appointmentRepository, times(1)).findById(1L);
+        mockMvc.perform(put("/api/v1/appointments/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.doctorId").value(2L))
+                .andExpect(jsonPath("$.status").value("RESCHEDULED"));
     }
 
     @Test
-    void getAppointmentById_ShouldThrowWhenNotFound() {
-        when(appointmentRepository.findById(1L)).thenReturn(Optional.empty());
+    void deleteAppointment_ShouldReturnNoContent() throws Exception {
+        mockMvc.perform(delete("/api/v1/appointments/1"))
+                .andExpect(status().isNoContent());
 
-        assertThrows(AppointmentNotFoundException.class, () -> {
-            appointmentService.getAppointmentById(1L);
-        });
-    }
-
-    @Test
-    void updateAppointment_ShouldUpdateSuccessfully() {
-        when(appointmentRepository.findById(1L)).thenReturn(Optional.of(appointment));
-        when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
-        when(doctorRepository.findById(1L)).thenReturn(Optional.of(doctor));
-        when(consultRoomRepository.findById(1L)).thenReturn(Optional.of(consultRoom));
-        when(appointmentRepository.findConflicts(any(), any(), any(), any())).thenReturn(List.of());
-        when(appointmentRepository.save(any())).thenReturn(appointment);
-        when(appointmentMapper.toDTO(any())).thenReturn(appointmentDTO);
-
-        AppointmentDTO result = appointmentService.updateAppointment(1L, appointmentDTO);
-
-        assertNotNull(result);
-        verify(appointmentRepository, times(1)).save(any());
-    }
-
-    @Test
-    void deleteAppointment_ShouldDeleteSuccessfully() {
-        when(appointmentRepository.existsById(1L)).thenReturn(true);
-        doNothing().when(appointmentRepository).deleteById(1L);
-
-        assertDoesNotThrow(() -> {
-            appointmentService.deleteAppointment(1L);
-        });
-
-        verify(appointmentRepository, times(1)).deleteById(1L);
+        verify(appointmentService).deleteAppointment(1L);
     }
 }
