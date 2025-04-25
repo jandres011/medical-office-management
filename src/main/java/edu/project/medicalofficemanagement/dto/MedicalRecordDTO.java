@@ -1,12 +1,8 @@
 package edu.project.medicalofficemanagement.dto;
 
-
-import edu.project.medicalofficemanagement.model.Appointment;
-import edu.project.medicalofficemanagement.model.Patient;
-import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.validator.constraints.NotBlank;
 
 import java.time.LocalDateTime;
 
@@ -15,17 +11,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class MedicalRecordDTO {
+    private Long id;
 
-    @NotNull
-    private Appointment appointment;
+    @NotNull(message = "La cita es obligatoria")
+    private Long appointmentId;
 
-    @NotNull
-    private Patient patient;
+    @NotNull(message = "Elpaciente es obligatorio")
+    private Long patientId;
 
-    @NotBlank
+    @NotBlank(message = "El diagnóstico no puede estar vacío")
     private String diagnosis;
 
-    @NotBlank
+    @NotBlank(message = "Las notas no pueden estar vacías")
     private String notes;
 
     private LocalDateTime createdAt;

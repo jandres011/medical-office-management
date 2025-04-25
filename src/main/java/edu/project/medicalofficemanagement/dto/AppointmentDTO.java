@@ -1,36 +1,37 @@
 package edu.project.medicalofficemanagement.dto;
 
-import edu.project.medicalofficemanagement.model.ConsultRoom;
+import edu.project.medicalofficemanagement.enums.status.Status;
+import edu.project.medicalofficemanagement.validation.annotation.EnumValid;
 import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AppointmentDTO {
-
     private Long id;
 
-    @NotBlank
-    private String patientName;
+    @NotNull(message = "El paciente es obligatorio")
+    private Long patientId;
 
-    @NotBlank
-    private String doctorName;
+    @NotNull(message = "El doctor es obligatorio")
+    private Long doctorId;
 
-    @NotNull
-    private ConsultRoom consultRoom;
+    @NotNull(message = "El consultorio es obligatorio")
+    private Long consultRoomId;
 
-    @Future
+    @Future(message = "La fecha debe ser a futuro")
+    @NotNull(message = "La fecha no puede ser nula")
     private LocalDateTime startTime;
 
-    @Future
+    @Future(message = "La fecha debe ser a futuro")
+    @NotNull(message = "La fecha no puede ser nula")
     private LocalDateTime endTime;
 
-
+    @EnumValid(value = Status.class, message = "Estado inválido")
+    private Status status;
 }

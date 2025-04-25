@@ -2,10 +2,9 @@ package edu.project.medicalofficemanagement.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
@@ -13,15 +12,17 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PatientDTO {
 
-    private int id;
+    private Long id;
 
-    @NotBlank
-    private String name;
+    @NotBlank(message = "El nombre del paciente es obligatorio")
+    @Size(min = 2, max = 100, message = "El nombre debe tener entre 2 y 100 caracteres")
+    private String fullName;
 
-    @Email
-    @NotBlank
+    @Email(message = "Debe ser un email válido")
+    @NotBlank(message = "El email es obligatorio")
     private String email;
 
-    @NotBlank
-    private String phoneNumber ;
+    @NotBlank(message = "El número de teléfono es obligatorio")
+    @Pattern(regexp = "\\d{10}", message = "El número de teléfono debe contener solo dígitos y tener entre 10 y 15 caracteres")
+    private String phoneNumber;
 }

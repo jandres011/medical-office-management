@@ -1,18 +1,18 @@
-package edu.project.medicalofficemanagement.mapper;
+package edu.project.medicalofficemanagement.dto.mapper;
 
 import edu.project.medicalofficemanagement.dto.MedicalRecordDTO;
 import edu.project.medicalofficemanagement.model.MedicalRecord;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface MedicalRecordMapper {
     @Mapping(source = "appointment.id", target = "appointmentId")
-    @Mapping(source = "patient.id", target = "patiendId")
+    @Mapping(source = "patient.id", target = "patientId")
     MedicalRecordDTO toDTO(MedicalRecord medicalRecord);
 
-    @Mapping(target = "appointment" , ignore = true)
-    @Mapping(target = "patient", ignore = true)
+    @Mapping(source = "appointmentId", target = "appointment.id")
+    @Mapping(source = "patientId", target = "patient.id")
     MedicalRecord toEntity(MedicalRecordDTO medicalRecordDTO);
 }
-

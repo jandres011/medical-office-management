@@ -1,4 +1,4 @@
-package edu.project.medicalofficemanagement.mapper;
+package edu.project.medicalofficemanagement.dto.mapper;
 
 import edu.project.medicalofficemanagement.dto.ConsultRoomDTO;
 import edu.project.medicalofficemanagement.model.ConsultRoom;

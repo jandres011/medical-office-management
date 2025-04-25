@@ -33,10 +33,10 @@ public class MedicalRecord {
     @NotNull(message = "El paciente es obligatorio")
     private Patient patient;
 
-    @NotBlank(message = "Este campo no puede estar vacío")
+    @NotBlank(message = "El diagnóstico no puede estar vacío")
     private String diagnosis;
 
-    @NotBlank(message = "Este campo no puede estar vacío")
+    @NotBlank(message = "Las notas no pueden estar vacías")
     private String notes;
 
     @CreatedDate
