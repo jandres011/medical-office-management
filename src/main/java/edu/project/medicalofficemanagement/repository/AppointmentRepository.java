@@ -12,7 +12,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     @Query(value = "SELECT a FROM Appointment a " +
             "WHERE (a.doctor.id = :idDoctor OR a.consultRoom.id = :idConsultRoom) " +
             "AND (:startTime < a.endTime AND :endTime > a.startTime)")
-    List<Appointment> findConflicts(@Param("idDoctorId") Long idDoctor,
+    List<Appointment> findConflicts(@Param("idDoctor") Long idDoctor,
                                     @Param("idConsultRoom") Long idConsultRoom,
                                     @Param("startTime") LocalDateTime startTime,
                                     @Param("endTime") LocalDateTime endTime);

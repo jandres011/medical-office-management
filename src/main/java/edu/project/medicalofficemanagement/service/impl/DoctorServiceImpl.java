@@ -42,16 +42,18 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public DoctorDTO getDoctorByEmail(String email) {
-        return doctorRepository.findDoctorByEmail(email)
+        return doctorRepository.findByEmail(email)
                 .map(doctorMapper::toDTO)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor not found with email: " + email));
     }
 
     @Override
     public List<DoctorDTO> getDoctorsBySpecialization(Specialization specialization) {
-        return doctorRepository.findDoctorsBySpecialization(specialization)
-                .orElseThrow(() -> new DoctorNotFoundException("No doctor(s) were found with that specialization: " + specialization))
-                .stream()
+        List<Doctor> doctors = doctorRepository.findBySpecialization(specialization);
+        if (doctors.isEmpty()) {
+            throw new DoctorNotFoundException("No doctor(s) were found with that specialization: " + specialization);
+        }
+        return doctors.stream()
                 .map(doctorMapper::toDTO)
                 .toList();
     }

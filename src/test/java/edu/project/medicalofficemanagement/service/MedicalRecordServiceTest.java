@@ -82,7 +82,8 @@ class MedicalRecordServiceTest {
 
     @Test
     void getMedicalRecordsByPatientId_ShouldReturnList() {
-        when(medicalRecordRepository.findByPatient_Id(1L)).thenReturn(List.of(medicalRecord));
+        when(patientRepository.existsById(1L)).thenReturn(true);
+        when(medicalRecordRepository.findMedicalRecordsByPatient_Id(1L)).thenReturn(Optional.of(List.of(medicalRecord)));
         when(medicalRecordMapper.toDTO(medicalRecord)).thenReturn(medicalRecordDTO);
 
         List<MedicalRecordDTO> result = medicalRecordService.getMedicalRecordsByPatientId(1L);

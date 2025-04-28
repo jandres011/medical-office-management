@@ -31,7 +31,7 @@ public class Doctor {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @EnumValid(value = Status.class, message = "Especialización inválida")
+    @EnumValid(value = Specialization.class, message = "Especialización inválida")
     private Specialization specialization;
 
     @Future(message = "La fecha de disponibilidad debe ser a futuro")

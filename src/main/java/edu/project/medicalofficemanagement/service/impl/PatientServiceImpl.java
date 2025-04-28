@@ -40,7 +40,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public PatientDTO getPatientByEmail(String email) {
-        return patientRepository.findPatientByEmail(email)
+        return patientRepository.findByEmail(email)
                 .map(patientMapper::toDTO)
                 .orElseThrow(() -> new PatientNotFoundException("Patient not found with email: " + email));
     }

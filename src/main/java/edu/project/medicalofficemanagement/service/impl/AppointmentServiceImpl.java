@@ -39,7 +39,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 consultRoom.getId(),
                 appointmentDTO.getStartTime(),
                 appointmentDTO.getEndTime());
-        if(conflicts.isEmpty()){
+        if(!conflicts.isEmpty()){
             throw new AppointmentAlreadyExistException("The appointment is already scheduled for the selected time.");
         }
 
@@ -85,7 +85,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .stream()
                 .filter(b -> !b.getId().equals(id)) // Excluir la cita actual
                 .toList();
-        if(conflicts.isEmpty()){
+        if(!conflicts.isEmpty()){
             throw new AppointmentAlreadyExistException("The appointment is already scheduled for the selected time.");
         }
 

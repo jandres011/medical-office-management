@@ -22,7 +22,7 @@ class ConsultRoomRepositoryTest {
     void shouldSaveConsultRoom() {
         ConsultRoom room = ConsultRoom.builder()
                 .name("Room 101")
-                .floor("First Floor")
+                .floor("Floor 1")
                 .description("Cardiology Room")
                 .build();
 
@@ -36,14 +36,14 @@ class ConsultRoomRepositoryTest {
     void shouldFindConsultRoomByName() {
         consultRoomRepository.save(ConsultRoom.builder()
                 .name("Room 202")
-                .floor("Second Floor")
+                .floor("Floor 2")
                 .description("Neurology Room")
                 .build());
 
         Optional<ConsultRoom> found = consultRoomRepository.findByName(("Room 202"));
 
         assertTrue(found.isPresent());
-        assertEquals("Second Floor", found.get().getFloor());
+        assertEquals("Floor 2", found.get().getFloor());
     }
 
     @Test
@@ -56,7 +56,7 @@ class ConsultRoomRepositoryTest {
     void shouldFindAvailableConsultRooms() {
         consultRoomRepository.save(ConsultRoom.builder()
                 .name("Room 303")
-                .floor("Third Floor")
+                .floor("Floor 3")
                 .description("Available Room")
                 .build());
 
