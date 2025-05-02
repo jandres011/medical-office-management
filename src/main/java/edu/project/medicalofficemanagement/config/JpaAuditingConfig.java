@@ -1,4 +1,4 @@
-package config;
+package edu.project.medicalofficemanagement.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
