@@ -1,5 +1,6 @@
 package edu.project.medicalofficemanagement.model;
 
+import edu.project.medicalofficemanagement.enums.role.Roles;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -40,12 +42,20 @@ public class User implements UserDetails {
     private String lastName;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Roles roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(roles.name()));
     }
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "id_user", referencedColumnName = "idUser"),
+            inverseJoinColumns = @JoinColumn(name = "id_role", referencedColumnName = "idRole")
+    )
+    private Set<Role> role;
 
     @Override
     public boolean isAccountNonExpired() {

@@ -1,6 +1,6 @@
 package edu.project.medicalofficemanagement.dto.auth;
 
-import edu.project.medicalofficemanagement.model.Role;
+import edu.project.medicalofficemanagement.enums.role.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,5 +16,5 @@ public class RegisterRequest {
     private String email;
     private String firstName;
     private String lastName;
-    private Role role;
+    private Roles roles;
 }
